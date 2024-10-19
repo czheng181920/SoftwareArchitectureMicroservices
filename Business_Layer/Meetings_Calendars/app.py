@@ -78,6 +78,7 @@ def update_meeting(meeting_id):
 def delete_meeting(meeting_id):
     try:
         db.db_delete_meeting(meeting_id)
+        # TODO: call api gateway to delete orphaned attatchments and participants
         return jsonify({"message": "Meeting deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -159,6 +160,8 @@ def update_calendar(calendar_id):
 def delete_calendar(calendar_id):
     try:
         db.db_delete_calendar(calendar_id)
+        # TODO: call api gateway to delete orphaned attatchments and participants (orphaned meeetings are already deleted)
+        #  might have to change the trigger to a function so we can retrieve the meeting_id before it's deleted
         return jsonify({"message": "Calendar deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -191,13 +194,25 @@ def add_meeting_to_calendar():
 # Calendar-Meeting Management
 @app.route('/calendar/<calendar_id>/meeting/<meeting_id>', methods=['DELETE'])
 def delete_meeting_calendar(calendar_id, meeting_id):
-    response = requests.delete(f"{DATA_LAYER_URL}/calendar/{calendar_id}/meeting/{meeting_id}")
-    return jsonify(response.json()), response.status_code
-
+    data = request.get_json()
+    meeting_id = data.get('meeting_id')
+    calendar_id = data.get('calendar_id')
+    try:
+        db.db_delete_meeting_calendar(calendar_id, meeting_id)
+        return jsonify({"message": "Meeting deleted from calendar successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @app.route('/calendar/<calendar_id>/meeting/<meeting_id>', methods=['POST'])
 def add_meeting_calendar(calendar_id, meeting_id):
-    response = requests.post(f"{DATA_LAYER_URL}/calendar/{calendar_id}/meeting/{meeting_id}")
-    return jsonify(response.json()), response.status_code
+    data = request.get_json()
+    meeting_id = data.get('meeting_id')
+    calendar_id = data.get('calendar_id')
+    try:
+        db.db_create_associated_calendar_meeting(meeting_id, calendar_id)
+        return jsonify({"message": "Meeting added to calendar successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
