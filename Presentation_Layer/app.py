@@ -23,7 +23,7 @@ def home():
 def submit():
     data = request.get_json()
     print("Data sent to Business Layer")
-    url = f'http://{api_gateway_url}:5001/meeting'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting'
     response = requests.post(url, json=data)
     
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
