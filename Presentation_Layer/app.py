@@ -9,9 +9,9 @@ app = Flask(__name__)
 load_dotenv()
 
 # Get Business Layer IP
-#TODO: need to change this in template.env
-# BUSINESS_LAYER_IP = os.getenv('BUSINESS_LAYER_IP') 
-BUSINESS_LAYER_IP = '172.20.55.130' # neha ip
+#TODO: need to change this
+# BUSINESS_LAYER_IP = '172.20.55.130' # neha ip
+API_GATEWAY_URL=""
 
 # serve the index.html file
 @app.route('/')
@@ -23,7 +23,7 @@ def home():
 def submit():
     data = request.get_json()
     print("Data sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting'
+    url = f'http://{api_gateway_url}:5001/meeting'
     response = requests.post(url, json=data)
     
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
@@ -32,7 +32,7 @@ def submit():
 @app.route('/allMeetings', methods=['GET'])
 def getMeetings():
     print("Get all meetings from Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meetings'
+    url = f'http://{API_GATEWAY_URL}:5001/meetings'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -43,7 +43,7 @@ def getMeetingByID():
         return jsonify({"error": "Meeting ID is required"}), 400  # Return an error if ID is missing
 
     print("Meeting id to be found sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}'
     response = requests.get(url)
 
     # Check if the response from the business layer is valid
@@ -63,7 +63,7 @@ def updateMeetingByID():
 
     meeting_id = data.get('meeting_id')
     print("Meeting id to be updated sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}'
     response = requests.put(url, json={
         "title": title,
         "date_time": date_time,
@@ -81,7 +81,7 @@ def deleteMeeting():
         return jsonify({"error": "Meeting ID is required"}), 400
 
     print("Meeting ID to be deleted sent to Business Layer:", meeting_id)
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}'
     
     try:
         response = requests.delete(url)  # Call the business layer
@@ -101,7 +101,7 @@ def getListCalendars():
     if not meeting_id:
         return jsonify({"error": "Meeting ID is required"}), 400
     print("Meeting id of list of calendars sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}/calendars'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}/calendars'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -110,7 +110,7 @@ def getListParticipants():
     data = request.get_json()
     meeting_id = data.get('meeting_id')
     print("Meeting id of list of participants sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}/participants'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}/participants'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -119,20 +119,20 @@ def getListAttachments():
     data = request.get_json()
     meeting_id = data.get('meeting_id')
     print("Meeting id of list of attachments sent to Business Layer")
-    url = f'http://{BUSINESS_LAYER_IP}:5001/meeting/{meeting_id}/attachments'
+    url = f'http://{API_GATEWAY_URL}:5001/meeting/{meeting_id}/attachments'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
 @app.route('/addCalendar', methods=['POST'])
 def addCalendar():
     data = request.get_json()
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar' 
+    url = f'http://{API_GATEWAY_URL}:5001/calendar' 
     response = requests.post(url, json=data)
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
 
 @app.route('/allCalendars', methods=['GET'])
 def getCalendar():
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendars' 
+    url = f'http://{API_GATEWAY_URL}:5001/calendars' 
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -142,7 +142,7 @@ def findCalendar():
     if not calendar_id:
         return jsonify({"error": "Calendar ID is required"}), 400
     
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar/{calendar_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/calendar/{calendar_id}'
     response = requests.get(url)
 
     if response.ok:
@@ -159,7 +159,7 @@ def updateCalendar():
     details = data.get('calendar_details')
 
     calendar_id = data.get('calendar_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar/{calendar_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/calendar/{calendar_id}'
     response = requests.put(url, json={
         "calendar_title": title,
         "calendar_details": details
@@ -170,7 +170,7 @@ def updateCalendar():
 def deleteCalendar():
     data = request.get_json()
     calendar_id = data.get('calendar_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar/{calendar_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/calendar/{calendar_id}'
     response = requests.delete(url)
     return jsonify(response.json()), response.status_code
 
@@ -179,7 +179,7 @@ def deleteCalendar():
 def meetingsInCalendar():
     data = request.get_json()
     calendar_id = data.get('calendar_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar/{calendar_id}/meetings'
+    url = f'http://{API_GATEWAY_URL}:5001/calendar/{calendar_id}/meetings'
     response = requests.get(url, data)
     return jsonify(response.json()), response.status_code
 
@@ -193,7 +193,7 @@ def add_meeting_to_calendar_presentation():
         return jsonify({"error": "Meeting ID and Calendar ID are required"}), 400
 
     # Forward the request to the business layer
-    url = f'http://{BUSINESS_LAYER_IP}:5001/calendar/addMeeting'
+    url = f'http://{API_GATEWAY_URL}:5001/calendar/addMeeting'
     
     try:
         response = requests.post(url, json={
@@ -207,14 +207,14 @@ def add_meeting_to_calendar_presentation():
 @app.route('/addParticipant', methods=['POST'])
 def addParticipant():
     data = request.get_json()
-    url = f'http://{BUSINESS_LAYER_IP}:5001/participant'
+    url = f'http://{API_GATEWAY_URL}:5001/participant'
     response = requests.post(url, data)
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
 
 @app.route('/allParticipants', methods=['GET'])
 def allParticipants():
     data = request.get_json()
-    url = f'http://{BUSINESS_LAYER_IP}:5001/participants'
+    url = f'http://{API_GATEWAY_URL}:5001/participants'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -222,7 +222,7 @@ def allParticipants():
 def participantById():
     data = request.get_json()
     participant_id = data.get('participant_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/participant/{participant_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/participant/{participant_id}'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -230,7 +230,7 @@ def participantById():
 def updateParticipants():
     data = request.get_json()
     participant_id = data.get('participant_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/participant/{participant_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/participant/{participant_id}'
     response = requests.put(url,data)
     return jsonify(response.json()), response.status_code
 
@@ -238,21 +238,21 @@ def updateParticipants():
 def deleteParticipants():
     data = request.get_json()
     participant_id = data.get('participant_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/participant/{participant_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/participant/{participant_id}'
     response = requests.delete(url)
     return jsonify(response.json()), response.status_code
 
 @app.route('/addAttachment', methods=['POST'])
 def addAttachment():
     data = request.get_json()
-    url = f'http://{BUSINESS_LAYER_IP}:5001/attachment'
+    url = f'http://{API_GATEWAY_URL}:5001/attachment'
     response = requests.post(url, data)
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
 
 @app.route('/allAttachment', methods=['GET'])
 def allAttachments():
     data = request.get_json()
-    url = f'http://{BUSINESS_LAYER_IP}:5001/attachment'
+    url = f'http://{API_GATEWAY_URL}:5001/attachment'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -260,7 +260,7 @@ def allAttachments():
 def attachmentsById():
     data = request.get_json()
     attachment_id = data.get('attachment_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/attachment/{attachment_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/attachment/{attachment_id}'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 
@@ -268,7 +268,7 @@ def attachmentsById():
 def updateAttachment():
     data = request.get_json()
     attachment_id = data.get('attachment_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/attachment/{attachment_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/attachment/{attachment_id}'
     response = requests.put(url,data)
     return jsonify(response.json()), response.status_code
 
@@ -276,7 +276,7 @@ def updateAttachment():
 def deleteAttachment():
     data = request.get_json()
     attachment_id = data.get('attachment_id')
-    url = f'http://{BUSINESS_LAYER_IP}:5001/attachment/{attachment_id}'
+    url = f'http://{API_GATEWAY_URL}:5001/attachment/{attachment_id}'
     response = requests.delete(url)
     return jsonify(response.json()), response.status_code
 

@@ -1,5 +1,4 @@
-# All of these functions are placeholders for the actual implementation.
-# Must also edit cli.py to import the user input for the required functions
+# Used by old cli.py
 import sqlite3
 
 database = 'calendar.db'

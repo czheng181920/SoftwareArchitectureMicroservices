@@ -280,9 +280,8 @@ async function meetingSubmit()
     
       if (response.ok) 
       {
-      const responseData = await response.json();
-      console.log('Meeting created successfully:', responseData);
-      
+        const responseData = await response.json();
+        console.log('Meeting created successfully:', responseData);
       } 
       else 
       {
@@ -513,7 +512,7 @@ async function addCalendar()
 
   // Send POST request
   try {
-    const response = await fetch('/addCalendar', {
+    const response = await fetch('/calendar', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -915,7 +914,7 @@ async function addAttachment() {
   };
 
   try {
-    const response = await fetch('/addAttachment', {
+    const response = await fetch('/attachment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -937,7 +936,7 @@ async function addAttachment() {
 // Get all attachments
 async function allAttachments() {
   try {
-    const response = await fetch('/allAttachment', {
+    const response = await fetch('/attachments', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -1019,17 +1018,14 @@ async function findAttachmentById() {
 // Update an attachment
 async function updateAttachment() {
   const attachmentID = document.getElementById("attachment-id").value;
-  const attachmentName = document.getElementById("attachment-name").value;
-  const attachmentFile = document.getElementById("attachment-file").value;
+  const attachmentFile = document.getElementById("attachment-file").value; // Assuming only the URL needs to be updated
 
   const data = {
-    attachment_id: attachmentID,
-    name: attachmentName,
-    file: attachmentFile
+    url: attachmentFile // Adjusted to match what your backend expects
   };
 
   try {
-    const response = await fetch('/updateAttachment', {
+    const response = await fetch(`/attachment/${attachmentID}`, { // Updated endpoint
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -1052,22 +1048,17 @@ async function updateAttachment() {
 async function deleteAttachment() {
   const attachmentID = document.getElementById("attachment-id").value;
 
-  const data = {
-    attachment_id: attachmentID
-  };
-
   try {
-    const response = await fetch('/deleteAttachment', {
+    const response = await fetch(`/attachment/${attachmentID}`, { // Updated endpoint
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
+      }
     });
 
     if (response.ok) {
       const result = await response.json();
-      console.log('Attachment deleted successfully:', result.message);
+      console.log('Attachment deleted successfully:', result.message || 'Attachment deleted.');
     } else {
       console.error('Error deleting attachment:', response.status);
     }

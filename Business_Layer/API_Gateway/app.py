@@ -11,7 +11,7 @@ Participant_URL = 'http://'
 Meetings_Calendars_URL = 'http://'
 Attachments_URL = 'http://'
 
-# mock, delete later TODO
+# TODO: mock, delete later
 @app.route('/process', methods=['POST'])
 def process():
     data = request.get_json()
@@ -209,12 +209,12 @@ def create_participant():
 
 @app.route('/participants', methods=['GET'])
 def query_all_participants():
-    response = requests.get(f"{DATA_LAYER_URL}/all_participants")
+    response = requests.get(f"{Participant_URL}/all_participants")
     return jsonify(response.json()), response.status_code
 
 @app.route('/participant/<participant_id>', methods=['GET'])
 def query_participant_by_id(participant_id):
-    response = requests.get(f"{DATA_LAYER_URL}/participant/{participant_id}")
+    response = requests.get(f"{Participant_URL}/participant/{participant_id}")
     return jsonify(response.json()), response.status_code
 
 @app.route('/participant/<participant_id>', methods=['PUT'])
@@ -225,7 +225,7 @@ def update_participant(participant_id):
     if not is_valid_email(email):
         return jsonify({"error": "Invalid email"}), 400
 
-    response = requests.put(f"{DATA_LAYER_URL}/update_participant/{participant_id}", json={
+    response = requests.put(f"{Participant_URL}/update_participant/{participant_id}", json={
         "name": name,
         "email": email
     })
@@ -233,7 +233,7 @@ def update_participant(participant_id):
 
 @app.route('/participant/<participant_id>', methods=['DELETE'])
 def delete_participant(participant_id):
-    response = requests.delete(f"{DATA_LAYER_URL}/delete_participant/{participant_id}")
+    response = requests.delete(f"{Participant_URL}/delete_participant/{participant_id}")
     return jsonify(response.json()), response.status_code
 
 # Attachment Management
