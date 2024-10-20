@@ -5,18 +5,9 @@ import re
 
 app = Flask(__name__)
 
-
-# TODO: test this with the actual IP addresses
-Participant_URL = 'http://'
-Meetings_Calendars_URL = 'http://'
-Attachments_URL = 'http://'
-
-# TODO: mock, delete later
-@app.route('/process', methods=['POST'])
-def process():
-    data = request.get_json()
-    # result = send_to_data_layer(data)
-    return f"Processed data: {data}", 200
+Meetings_Calendars_URL = 'http://172.20.53.162:5001'
+Attachments_URL = 'http://172.20.53.162:5003'
+Participant_URL = 'http://172.20.53.162:5004'
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -25,7 +16,6 @@ def is_valid_email(email):
     # Simple regex for validating an email
     regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(regex, email) is not None
-
 
 # Meeting Management
 @app.route('/meeting', methods=['POST'])
@@ -50,6 +40,7 @@ def create_meeting():
 
 @app.route('/meetings', methods=['GET'])
 def query_all_meetings():
+    print('api gateweay reached')
     response = requests.get(f"{Meetings_Calendars_URL}/meetings")
     return jsonify(response.json()), response.status_code
 
@@ -182,12 +173,15 @@ def add_meeting_to_calendar():
 # Participant Management
 @app.route('/participant', methods=['POST'])
 def create_participant():
+    print('gateway reached')
     data = request.get_json()
+    print(data)
     meeting_id = data.get('meeting_id')
 
     # Validate meeting ID by querying the data layer
-    response = requests.get(f"{DATA_LAYER_URL}/check_meeting/{meeting_id}")#not sure where this request is supposed to go
-    if response.status_code != 200 or not response.json().get('valid'):
+    response = requests.get(f"{Meetings_Calendars_URL}/meeting/{meeting_id}")
+    # if response.status_code != 200 or not response.json().get('valid'):
+    if response.status_code != 200:
         return jsonify({"error": "Invalid meeting ID"}), 400
 
     name = data.get('name')
@@ -198,7 +192,7 @@ def create_participant():
     participant_id = data.get('participant_id', generate_uuid())
 
     # Send request to data layer
-    response = requests.post(f"{DATA_LAYER_URL}/create_participant", json={
+    response = requests.post(f"{Participant_URL}/create_participant", json={
         "participant_id": participant_id,
         "meeting_id": meeting_id,
         "name": name,
@@ -207,10 +201,34 @@ def create_participant():
 
     return jsonify(response.json()), response.status_code
 
+# @app.route('/participants', methods=['GET'])
+# def query_all_participants():
+#     response = requests.get(f"{Participant_URL}/all_participants")
+#     return jsonify(response.json()), response.status_code
+
 @app.route('/participants', methods=['GET'])
 def query_all_participants():
-    response = requests.get(f"{Participant_URL}/all_participants")
-    return jsonify(response.json()), response.status_code
+    try:
+        response = requests.get(f"{Participant_URL}/all_participants")
+        
+        # Check if the response is successful
+        if response.status_code != 200:
+            return jsonify({"error": "Failed to fetch participants", "status_code": response.status_code}), response.status_code
+
+        # Check if the response content is empty
+        if not response.text.strip():
+            return jsonify({"error": "No data returned from the participant service"}), 500
+        
+        # Try parsing the JSON response
+        try:
+            return jsonify(response.json()), response.status_code
+        except ValueError:
+            return jsonify({"error": "Invalid JSON received from participant service"}), 500
+            
+    except requests.exceptions.RequestException as e:
+        # Handle other potential request errors
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/participant/<participant_id>', methods=['GET'])
 def query_participant_by_id(participant_id):
@@ -243,7 +261,7 @@ def create_attachment():
     meeting_id = data.get('meeting_id')
 
     # Validate meeting ID
-    response = requests.get(f"{DATA_LAYER_URL}/check_meeting/{meeting_id}")#not sure where this request is supposed to go
+    response = requests.get(f"{Meetings_Calendars_URL}/check_meeting/{meeting_id}")#not sure where this request is supposed to go
     if response.status_code != 200 or not response.json().get('valid'):
         return jsonify({"error": "Invalid meeting ID"}), 400
     
@@ -251,7 +269,7 @@ def create_attachment():
     attachment_id = data.get('attachment_id', generate_uuid())
 
     # Send request to data layer
-    response = requests.post(f"{Attachments_URL}/store/create_attachment", json={
+    response = requests.post(f"{Attachments_URL}/create_attachment", json={
         "attachment_id": attachment_id,
         "meeting_id": meeting_id,
         "url": url
