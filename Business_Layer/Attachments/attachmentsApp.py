@@ -19,49 +19,48 @@ def create_attachment():
         return jsonify({"message": "Attachment created successfully"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
-#do for the rest!!!!!
-@app.route('/store/participants', methods=['GET'])
-def get_all_participants():
+    
+@app.route('/store/attachment/<attachment_id>', methods=['GET'])
+def get_attachment_by_id(attachment_id):
     try:
-        participants = db.db_query_all_participants()
-        return jsonify(participants), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/store/participant/<participant_id>', methods=['GET'])
-def get_participant_by_id(participant_id):
-    try:
-        participant = db.db_query_participant_by_id(participant_id)
-        if participant:
-            return jsonify(participant), 200
+        attachment = db.db_query_attachment_by_id(attachment_id)
+        if attachment:
+            return jsonify(attachment), 200
         else:
-            return jsonify({"error": "Participant not found"}), 404
+            return jsonify({"error": "Attachment not found"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-@app.route('/store/update_participant/<participant_id>', methods=['PUT'])
-def update_participant(participant_id):
+
+@app.route('/store/attachment/all_attachments', methods=['GET'])
+def get_all_attachments():
+    try:
+        attachment = db.db_query_all_attachments()
+        if attachment:
+            return jsonify(attachment), 200
+        else:
+            return jsonify({"error": "Attachments not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500    
+
+
+@app.route('/store/update_attachment/<attachment_id>', methods=['PUT'])
+def update_participant(attachment_id):
     data = request.json
     name = data.get('name')
     email = data.get('email')
 
     try:
-        db.db_update_participant(participant_id, name, email)
-        return jsonify({"message": "Participant updated successfully"}), 200
+        db.db_update_attachment(attachment_id, name, email)
+        return jsonify({"message": "Attachment updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route('/store/delete_participant/<participant_id>', methods=['DELETE'])
-def delete_participant(participant_id):
+    
+@app.route('/store/delete_attachment/<attachment_id>', methods=['DELETE'])
+def delete_participant(attachment_id):
     try:
-        db.db_delete_participant(participant_id)
+        db.db_delete_participant(attachment_id)
         return jsonify({"message": "Participant deleted successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-
 
 

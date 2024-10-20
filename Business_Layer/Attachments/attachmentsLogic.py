@@ -1,8 +1,6 @@
 import sqlite3
 database= 'attachments.db'
 
-
-
 # attachment functions
 def db_create_attachment(attachment_id, meeting_id, url):
     connection = sqlite3.connect(database)
