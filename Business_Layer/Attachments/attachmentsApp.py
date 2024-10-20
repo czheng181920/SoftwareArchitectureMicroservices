@@ -5,9 +5,9 @@ app = Flask(__name__)
 
 #TODO: add endpoints for attachments 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5004)
+    app.run(host='0.0.0.0', port=5003)
 
-@app.route('/store/create_attachment', methods=['POST'])
+@app.route('/create_attachment', methods=['POST'])
 def create_attachment():
     data = request.json
     attachment_id = data.get('attachment_id')
@@ -20,7 +20,7 @@ def create_attachment():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/store/attachment/<attachment_id>', methods=['GET'])
+@app.route('/attachment/<attachment_id>', methods=['GET'])
 def get_attachment_by_id(attachment_id):
     try:
         attachment = db.db_query_attachment_by_id(attachment_id)
@@ -31,7 +31,7 @@ def get_attachment_by_id(attachment_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/store/attachment/all_attachments', methods=['GET'])
+@app.route('/all_attachments', methods=['GET'])
 def get_all_attachments():
     try:
         attachment = db.db_query_all_attachments()
@@ -43,7 +43,7 @@ def get_all_attachments():
         return jsonify({"error": str(e)}), 500    
 
 
-@app.route('/store/update_attachment/<attachment_id>', methods=['PUT'])
+@app.route('/update_attachment/<attachment_id>', methods=['PUT'])
 def update_participant(attachment_id):
     data = request.json
     name = data.get('name')
@@ -55,7 +55,7 @@ def update_participant(attachment_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route('/store/delete_attachment/<attachment_id>', methods=['DELETE'])
+@app.route('/delete_attachment/<attachment_id>', methods=['DELETE'])
 def delete_participant(attachment_id):
     try:
         db.db_delete_participant(attachment_id)

@@ -1,17 +1,18 @@
 from flask import Flask, render_template, jsonify, request
 import requests
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import os
 
 app = Flask(__name__)
 
 #load enviornmental variables from .env file
-load_dotenv()
+#
+# load_dotenv()
 
 # Get Business Layer IP
 #TODO: need to change this
 # BUSINESS_LAYER_IP = '172.20.55.130' # neha ip
-API_GATEWAY_URL=""
+API_GATEWAY_URL= '172.20.180.53'
 
 # serve the index.html file
 @app.route('/')
@@ -208,12 +209,11 @@ def add_meeting_to_calendar_presentation():
 def addParticipant():
     data = request.get_json()
     url = f'http://{API_GATEWAY_URL}:5001/participant'
-    response = requests.post(url, data)
+    response = requests.post(url, json=data)
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
 
 @app.route('/allParticipants', methods=['GET'])
 def allParticipants():
-    data = request.get_json()
     url = f'http://{API_GATEWAY_URL}:5001/participants'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
@@ -249,10 +249,9 @@ def addAttachment():
     response = requests.post(url, data)
     return jsonify({"message": "Data sent to Business Layer", "response": response.text})
 
-@app.route('/allAttachment', methods=['GET'])
+@app.route('/attachments', methods=['GET'])
 def allAttachments():
-    data = request.get_json()
-    url = f'http://{API_GATEWAY_URL}:5001/attachment'
+    url = f'http://{API_GATEWAY_URL}:5001/attachments'
     response = requests.get(url)
     return jsonify(response.json()), response.status_code
 

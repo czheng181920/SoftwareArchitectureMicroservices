@@ -98,3 +98,52 @@ Then in a separate terminal:
 `cd Business_Layer`
 `. .venv/bin/activate`
 `python -m unittest test_app.py`
+
+
+# Hosting Each MicroService(Part 3) 
+You must host each microservice before running the application
+
+Hosting the Presentation Layer:
+`cd Presentation_Layer` 
+`python3 -m venv .venv`
+`. .venv/bin/activate`
+
+CLI Hosting:
+`python3 cli.py`
+
+Website Hosting:
+`flask run`
+
+
+Hosting the API Gateway:
+`cd Business_Layer` 
+`python3 -m venv .venv`
+`. .venv/bin/activate`
+`cd API_Gateway`
+`python3 app.py`
+
+Hosting the Meetings_Calendar Microservice:
+`cd Business_Layer` 
+`python3 -m venv .venv`
+`. .venv/bin/activate`
+
+`cd Meetings_Calendars`
+`python3 app.py`
+
+Hosting the Participants Microservice:
+`cd Business_Layer` 
+`python3 -m venv .venv`
+`. .venv/bin/activate`
+
+`cd Participants`
+`python3 participantsApp.py`
+
+Hosting the Attachments Microservice:
+`cd Business_Layer` 
+`python3 -m venv .venv`
+`. .venv/bin/activate`
+
+`cd Attachments`
+`python3 attachmentsApp.py`
+
+

@@ -166,12 +166,12 @@ function handleParticipantOptionChange()
   const selectedParticipantOption = document.getElementById("participant-option").value;
   
   const participantIdSection = document.getElementById("participant-id-section");
-  const meetingIdSection = document.getElementById("meeting-id-section");
+  const meetingIdSection = document.getElementById("meeting-id-section-participant");
   const participantNameSection = document.getElementById("participant-name-section");
   const participantEmailSection = document.getElementById("participant-email-section");
 
   const participantSubmitSection = document.getElementById("participant-submit-section"); 
-  const participantSubmitButton = document.getElementById("participant-submit-button")
+  const participantSubmitButton = document.getElementById("participantSubmitButton")
 
   // Display the meeting ID input field only for options that require it
   if (selectedParticipantOption === "1" || selectedParticipantOption === "4") 
@@ -193,6 +193,7 @@ function handleParticipantOptionChange()
   } else {
     // Other options (query by ID, update, delete) require a meeting ID
     participantIdSection.style.display = "block";
+    //meetingIdSection.style.display = "block";
     participantNameSection.style.display = "none";   
     participantEmailSection.style.display = "none"; 
     participantSubmitSection.style.display = "block";     
@@ -202,20 +203,16 @@ function handleParticipantOptionChange()
   {
     if (selectedParticipantOption === "1") 
     {
-      addCalendar();
+      addParticipant();
     } else if (selectedParticipantOption === "2") {
-      allCalendar();
+      allParticipants();
     } else if (selectedParticipantOption === "3") {
-      findCalendarById()
+      findParticipantById()
     } else if (selectedParticipantOption === "4") {
-      updateCalendar();
+      updateParticipant();
     } else if (selectedParticipantOption === "5") {
-      deleteCalendar();
-    } else if (selectedParticipantOption === "6") {
-      allMeetinginCalendar();
-    } else if (selectedParticipantOption === "7") {
-      associateMeetingWithCalendar()
-    }
+      deleteParticipant();
+    } 
   };
 
 }
@@ -225,29 +222,52 @@ function handleAttachmentOptionChange() {
   const selectedAttachmentOption = document.getElementById("attachment-option").value;
   
   const attachmentIdSection = document.getElementById("attachment-id-section");
-  const meetingIdSection = document.getElementById("meeting-id-section");
+  const meetingIdSection = document.getElementById("meeting-id-section-attachment");
   const attachmentUrlSection = document.getElementById("attachment-url-section");
+  const attachmentSubmitButton = document.getElementById("attachmentSubmitButton");
+
+  const attachmentSubmitSection = document.getElementById("attachment-submit-section");
 
   // Display the meeting ID input field only for options that require it
   if (selectedAttachmentOption === "1" || selectedAttachmentOption === "4") {
     // Creating or querying all meetings does not require a meeting ID
     attachmentIdSection.style.display = "block";  
     meetingIdSection.style.display = "block";  
-    attachmentUrlSection.style.display = "block";    
+    attachmentUrlSection.style.display = "block";
+    attachmentSubmitSection.style.display = "block";    
   } 
   else if (selectedAttachmentOption === "2") {
     // Creating or querying all meetings does not require a meeting ID
     attachmentIdSection.style.display = "none";
     meetingIdSection.style.display = "none";  
-    attachmentUrlSection.style.display = "none";       
+    attachmentUrlSection.style.display = "none";
+    attachmentSubmitSection.style.display = "block"; 
+
   } else {
     // Other options (query by ID, update, delete) require a meeting ID
     attachmentIdSection.style.display = "block";
     meetingIdSection.style.display = "none";  
-    attachmentUrlSection.style.display = "none";   
+    attachmentUrlSection.style.display = "none";
+     attachmentSubmitSection.style.display = "block";    
   }
-}
 
+  attachmentSubmitButton.onclick = function() 
+  {
+    if (selectedAttachmentOption === "1") 
+    {
+      addAttachment();
+    } else if (selectedAttachmentOption === "2") {
+      allAttachments();
+    } else if (selectedAttachmentOption === "3") {
+      findAttachmentById()
+    } else if (selectedAttachmentOption === "4") {
+      updateAttachment();
+    } else if (selectedAttachmentOption === "5") {
+      deleteAttachment();
+    } 
+  };
+
+}
 
 async function meetingSubmit()
 {
@@ -730,11 +750,13 @@ async function associateMeetingWithCalendar() {
 // Add a new participant
 async function addParticipant() {
   const participantID = document.getElementById("participant-id").value;
+  const meetingID = document.getElementById("meeting-id-participant").value;
   const participantName = document.getElementById("participant-name").value;
   const participantEmail = document.getElementById("participant-email").value;
 
   const data = {
     participant_id: participantID,
+    meeting_id: meetingID, 
     name: participantName,
     email: participantEmail
   };
@@ -764,9 +786,10 @@ async function allParticipants() {
   try {
     const response = await fetch('/allParticipants', {
       method: 'GET',
-      headers: {
+      /*headers: {
         'Content-Type': 'application/json'
       }
+      */
     });
 
     if (response.ok) {
@@ -904,13 +927,13 @@ async function deleteParticipant() {
 // Add a new attachment
 async function addAttachment() {
   const attachmentID = document.getElementById("attachment-id").value;
-  const attachmentName = document.getElementById("attachment-name").value;
-  const attachmentFile = document.getElementById("attachment-file").value;
+  const meetingID = document.getElementById("meeting-id-attachment").value;
+  const attachmentURL = document.getElementById("attachment-url").value;
 
   const data = {
     attachment_id: attachmentID,
-    name: attachmentName,
-    file: attachmentFile
+    meeting_id: meetingID,
+    url: attachmentURL
   };
 
   try {

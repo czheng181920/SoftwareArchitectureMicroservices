@@ -1,10 +1,10 @@
 import uuid
-import Data_Layer.logic as logic
+#import Data_Layer.logic as logic
 import re
 import requests
 
 #TODO: modify this with the right url
-API_GATEWAY_URL = ""
+API_GATEWAY_URL = 'http://172.20.180.53:5001'
 
 def main_menu():
 
@@ -223,7 +223,7 @@ def is_valid_email(email: str) -> bool:
 def query_all_meetings():
     try:
         # Send a GET request to the API endpoint for all meetings
-        url = f"{API_GATEWAY_URL}/allMeetings"
+        url = f"{API_GATEWAY_URL}/meetings"
         response = requests.get(url)
 
         if response.status_code == 200:

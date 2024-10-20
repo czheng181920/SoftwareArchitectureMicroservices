@@ -161,9 +161,9 @@
           <input type="text" id="participant-id" name="participant-id" placeholder="Enter Participant ID">
         </div>
 
-        <div id="meeting-id-section" style="display:none; margin-top: 10px;">
+        <div id="meeting-id-section-participant" style="display:none; margin-top: 10px;">
           <label for="meeting-id">Enter Meeting ID:</label>
-          <input type="text" id="meeting-id" name="meeting-id" placeholder="Enter Meeting ID">
+          <input type="text" id="meeting-id-participant" name="meeting-id" placeholder="Enter Meeting ID">
         </div>
 
         <div id="participant-name-section" style="display:none; margin-top: 10px;">
@@ -189,8 +189,8 @@
     <div id="attachmentsForm" style="display:none">
       <h2>Manage Attachments</h2>
       <form id="attachment">
-        <label for="attachment">Select an option:</label>
-        <select id="attachment" name="attachment" onchange="handleAttachmentOptionChange()">
+        <label for="attachment-option">Select an option:</label>
+        <select id="attachment-option" name="attachment" onchange="handleAttachmentOptionChange()">
           <option value="0">Select...</option>
           <option value="1">Create Attachments</option>
           <option value="2">Query All Attachments</option>
@@ -205,9 +205,9 @@
           <input type="text" id="attachment-id" name="attachment-id" placeholder="Enter Attachment ID">
         </div>
 
-        <div id="meeting-id-section" style="display:none; margin-top: 10px;">
+        <div id="meeting-id-section-attachment" style="display:none; margin-top: 10px;">
           <label for="meeting-id">Enter Meeting ID:</label>
-          <input type="text" id="meeting-id" name="meeting-id" placeholder="Enter Meeting ID">
+          <input type="text" id="meeting-id-attachment" name="meeting-id" placeholder="Enter Meeting ID">
         </div>
 
         <div id="attachment-url-section" style="display:none; margin-top: 10px;">
