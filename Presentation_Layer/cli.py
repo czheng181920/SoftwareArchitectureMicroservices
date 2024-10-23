@@ -3,7 +3,6 @@ import uuid
 import re
 import requests
 
-#TODO: modify this with the right url
 API_GATEWAY_URL = 'http://172.20.180.53:5001'
 
 def main_menu():
